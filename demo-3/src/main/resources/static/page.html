@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="/jquery/jquery.min.js"></script>
+</head>
+<body>
+
+
+ <form action="" id="form1">
+ 
+ <input type="text" name="testName"  id="testName">
+ 
+ </form>
+ <table id="table1" border="1">
+ </table>
+ <input type="button" value="点击一下就进数据库了" onclick="testsave()" />
+ <input type="button" value="一不小心就查出来了" onclick="testselect()" />
+ 
+<script type="text/javascript">
+
+function testsave() {
+	
+var testName=$("#testName").val();
+	
+	 $.ajax({
+                 //几个参数需要注意一下
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: "/testClient" ,//url
+                data: {testName:testName},
+                success: function (data) {
+                 // console.log(result);//打印服务端返回的数据(调试用)
+                     	alert(data.message);  
+            },
+                error : function() {
+                    alert("异常！");
+                }
+            });
+  }
+ 
+ function testselect() {
+	 
+	 $.ajax({
+		    url:"/testRestTemplate",
+		    type:"post",
+ 		    success:function(data){
+ 		    $("#table1").empty();	
+  		   if(data.message!=null){           		 
+      		 var message='<h3>'+data.message+'</h3>';
+      		 $("#table1").append(message);
+      	 }else if(data.error!=null){
+      		 var error='<h3>'+data.error+'</h3>';
+      		 $("#table1").append(error);
+      	 }else{
+      		  var dataObj = data.datas  
+                var a=null;//主要是因为json是个数组，有多列结果的时候，得拼接+
+                $.each(dataObj,function(i,item){    
+                  //  $.each(itema,function(i,item){    
+
+                	  alert(item.length);
+                        for (var i = 0; i < item.length; i++) {
+                        	 a +='<tr><td id="id">'+item[i].testId+'</td>'
+                             +'<td id="name">'+item[i].testName+'</td>'
+                              +'</tr>';
+                		} 
+                      
+                   // })
+                 })
+                $("#table1").append(a);
+      	 }     	
+ 		    },
+		    error:function(e){
+		        alert("错误！！");
+ 		    }
+		}); 
+	 
+	 
+ }
+
+
+
+
+
+
+
+
+</script>
+
+
+ 
+
+
+
+
+
+
+
+</body>
+</html>
